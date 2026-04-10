@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Lernplan App</title>
+<style>
+body { font-family: Arial; padding:20px; background:#f5f5f5;}
+h1 { margin-bottom:10px;}
+input, button { padding:8px; margin:5px;}
+.card { background:white; padding:15px; margin:10px 0; border-radius:10px;}
+</style>
+</head>
+<body>
+
+<h1>Lernplan Generator</h1>
+
+<h3>Fach hinzufügen</h3>
+<input id="name" placeholder="Fach">
+<input id="freq" type="number" placeholder="pro Woche">
+<input id="dur" type="number" placeholder="Minuten">
+<button onclick="addSubject()">Hinzufügen</button>
+
+<div id="subjects"></div>
+
+<h3>Plan generieren</h3>
+<button onclick="generate()">Generieren</button>
+
+<div id="output"></div>
+
+<script>
+let subjects = [];
+
+function addSubject(){
+    const name = document.getElementById("name").value;
+    const freq = parseInt(document.getElementById("freq").value);
+    const dur = parseInt(document.getElementById("dur").value);
+
+    subjects.push({name, freq, dur});
+    render();
+}
+
+function render(){
+    document.getElementById("subjects").innerHTML =
+        subjects.map(s => `<div class="card">${s.name} (${s.freq}x, ${s.dur}min)</div>`).join("");
+}
+
+function generate(){
+    const days = ["Mo","Di","Mi","Do","Fr","Sa","So"];
+    let plan = {};
+    days.forEach(d => plan[d] = []);
+
+    let i = 0;
+    subjects.forEach(s => {
+        for(let j=0;j<s.freq;j++){
+            plan[days[i % 7]].push(s.name);
+            i++;
+        }
+    });
+
+    document.getElementById("output").innerHTML =
+        Object.entries(plan).map(([day, list]) =>
+            `<div class="card"><b>${day}</b><br>${list.join("<br>")}</div>`
+        ).join("");
+}
+</script>
+
+</body>
+</html>
